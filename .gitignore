@@ -1,10 +1,14 @@
-
-###> symfony/framework-bundle ###
-/.env.local
-/.env.local.php
-/.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
 /public/bundles/
 /var/
 /vendor/
-###< symfony/framework-bundle ###
+
+docker/.DS_Store
+symfony.lock
+composer.lock
+
+.vscode/tasks.json
+
+docker/mysql
+.env
+.DS_Store
