@@ -14,20 +14,20 @@ class ProcessCsvBatchHandler
 
     public function __invoke(ProcessCsvBatch $message)
     {
-        $batch = [];
+        $connection = $this->entityManager->getConnection();
+
+        $values = [];
+        $params = [];
 
         foreach ($message->getRecords() as $record) {
-            $subscriber = new Subscriber();
-            $subscriber->setName($record['name']);
-            $subscriber->setEmail($record['email']);
-            $subscriber->setAge((int) $record['age']);
-            $subscriber->setAddress($record['address']);
-
-            $this->entityManager->persist($subscriber);
-            $batch[] = $subscriber;
+            $values[] = "(?, ?, ?, ?)";
+            $params[] = $record['name'];
+            $params[] = $record['email'];
+            $params[] = (int) $record['age'];
+            $params[] = $record['address'];
         }
 
-        $this->entityManager->flush();
-        $this->entityManager->clear();
+        $sql = "INSERT IGNORE INTO subscriber (name, email, age, address) VALUES " . implode(", ", $values);
+        $connection->executeStatement($sql, $params);
     }
 }
