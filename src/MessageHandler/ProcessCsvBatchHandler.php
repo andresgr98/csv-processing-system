@@ -2,7 +2,6 @@
 
 namespace App\MessageHandler;
 
-use App\Entity\Subscriber;
 use App\Message\ProcessCsvBatch;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
@@ -29,5 +28,7 @@ class ProcessCsvBatchHandler
 
         $sql = "INSERT IGNORE INTO subscriber (name, email, age, address) VALUES " . implode(", ", $values);
         $connection->executeStatement($sql, $params);
+        $this->entityManager->flush();
+        $this->entityManager->clear();
     }
 }

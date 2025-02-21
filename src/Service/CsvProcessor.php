@@ -14,7 +14,7 @@ class CsvProcessor
         private readonly MessageBusInterface $messageBus
     ) {}
 
-    public function process(string $filePath, int $batchSize = 1000): void
+    public function process(string $filePath, int $batchSize): void
     {
         $csv = Reader::createFromPath($filePath, 'r');
         $csv->setHeaderOffset(0);
