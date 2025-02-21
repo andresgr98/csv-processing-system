@@ -10,7 +10,7 @@ framework:
                     serializer: 'messenger.transport.symfony_serializer'
 
         routing:
-            'App\Message\ProcessCsvRow': async
+            'App\Message\ProcessCsvBatch': async
 
 # when@test:
 #    framework:

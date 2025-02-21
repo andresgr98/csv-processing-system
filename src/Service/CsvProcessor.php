@@ -2,11 +2,10 @@
 
 namespace App\Service;
 
-use App\Entity\Subscriber;
 use Doctrine\ORM\EntityManagerInterface;
 use League\Csv\Reader;
 use Symfony\Component\Messenger\MessageBusInterface;
-use App\Message\ProcessCsvRow;
+use App\Message\ProcessCsvBatch;
 
 class CsvProcessor
 {
@@ -15,13 +14,25 @@ class CsvProcessor
         private readonly MessageBusInterface $messageBus
     ) {}
 
-    public function process(string $filePath): void
+    public function process(string $filePath, int $batchSize = 1000): void
     {
         $csv = Reader::createFromPath($filePath, 'r');
         $csv->setHeaderOffset(0);
 
+        $batch = [];
+
         foreach ($csv as $record) {
-            $this->messageBus->dispatch(new ProcessCsvRow($record));
+            $batch[] = $record;
+
+            if (count($batch) >= $batchSize) {
+                $this->messageBus->dispatch(new ProcessCsvBatch($batch));
+                $batch = [];
+            }
+        }
+
+
+        if (!empty($batch)) {
+            $this->messageBus->dispatch(new ProcessCsvBatch($batch));
         }
     }
 }
