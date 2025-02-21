@@ -17,11 +17,6 @@ class SubscriberController extends AbstractController
     #[Route('/api/subscribers', name: 'get_subscribers', methods: ['GET'])]
     public function index(Request $request, EntityManagerInterface $entityManager): JsonResponse
     {
-        $name = $request->query->get('name');
-        $email = $request->query->get('email');
-        $age = $request->query->get('age');
-        $address = $request->query->get('address');
-
         $filters = [
             'name' => $request->query->get('name'),
             'email' => $request->query->get('email'),
@@ -29,7 +24,12 @@ class SubscriberController extends AbstractController
             'address' => $request->query->get('address'),
         ];
 
-        $subscribers = $this->subscriberService->getSubscribers($filters);
+        $page = (int) $request->query->get('page', 1);
+        $limit = (int) $request->query->get('limit', 50);
+
+        $subscribers = $this->subscriberService->getSubscribers($filters, $page, $limit);
+
+        $totalRecords = $this->subscriberService->countSubscribers($filters);
 
         $subscribers = array_map(function (Subscriber $subscriber) {
             return [
@@ -40,6 +40,15 @@ class SubscriberController extends AbstractController
                 'address' => $subscriber->getAddress(),
             ];
         }, $subscribers);
-        return new JsonResponse($subscribers);
+
+        $response = [
+            'data' => $subscribers,
+            'totalRecords' => $totalRecords,
+            'page' => $page,
+            'limit' => $limit,
+            'totalPages' => ceil($totalRecords / $limit),
+        ];
+
+        return new JsonResponse($response);
     }
 }

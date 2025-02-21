@@ -8,8 +8,13 @@ class SubscriberService
 {
     public function __construct(private readonly SubscriberRepository $subscriberRepository) {}
 
-    public function getSubscribers(array $filters): array
+    public function getSubscribers(array $filters, int $page, int $limit)
     {
-        return $this->subscriberRepository->findByFilters($filters);
+        return $this->subscriberRepository->findByFilters($filters, $page, $limit);
+    }
+
+    public function countSubscribers(array $filters)
+    {
+        return $this->subscriberRepository->countByFilters($filters);
     }
 }
