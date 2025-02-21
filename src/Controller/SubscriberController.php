@@ -27,6 +27,10 @@ class SubscriberController extends AbstractController
         $page = (int) $request->query->get('page', 1);
         $limit = (int) $request->query->get('limit', 50);
 
+        if ($limit > 2000) {
+            $limit = 2000;
+        }
+
         $subscribers = $this->subscriberService->getSubscribers($filters, $page, $limit);
 
         $totalRecords = $this->subscriberService->countSubscribers($filters);
