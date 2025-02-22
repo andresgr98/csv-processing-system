@@ -164,4 +164,30 @@ curl -X GET "http://localhost:9000/api/subscribers?age=49"
 }
 ```
 
+## Future Improvements
+
+### API Architecture Enhancement
+
+The current API implementation follows a basic approach due to its simplicity. However, for future scalability and maintainability, the following architectural improvements could be implemented:
+
+#### Hexagonal Architecture
+Converting to a Hexagonal Architecture (also known as Ports and Adapters) would:
+- Isolate the domain logic from external concerns
+- Make the system more testable
+- Allow easier technology changes without affecting business logic
+- Provide clearer boundaries between different layers of the application
+
+#### CQRS (Command Query Responsibility Segregation)
+Implementing CQRS would be beneficial because:
+- It would separate read and write operations, optimizing each path independently
+- Read operations could be scaled differently from write operations
+- Could implement different storage solutions for reads (optimized for querying) and writes (optimized for updates)
+- Would make it easier to implement caching strategies for read operations
+
+This separation would be particularly useful for this system where:
+- Write operations (CSV processing) are batch-oriented and heavy
+- Read operations (API queries) require quick responses and different optimization strategies
+
+The implementation of these patterns would add some complexity, but the benefits in terms of maintainability, scalability, and flexibility would outweigh the initial development cost for a growing system.
+
 
