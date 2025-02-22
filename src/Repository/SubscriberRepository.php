@@ -71,4 +71,13 @@ class SubscriberRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    public function persistBatch(array $values, array $params): void
+    {
+        $sql = "INSERT IGNORE INTO subscriber (name, email, age, address) VALUES " . implode(", ", $values);
+
+        $this->getEntityManager()->getConnection()->executeStatement($sql, $params);
+        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
+    }
 }

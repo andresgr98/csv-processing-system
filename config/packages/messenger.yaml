@@ -6,8 +6,6 @@ framework:
         transports:
             async: 
                 dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
-                options:
-                    serializer: 'messenger.transport.symfony_serializer'
 
         routing:
             'App\Message\ProcessCsvBatch': async

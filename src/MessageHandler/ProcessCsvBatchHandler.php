@@ -3,18 +3,16 @@
 namespace App\MessageHandler;
 
 use App\Message\ProcessCsvBatch;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\SubscriberRepository;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 class ProcessCsvBatchHandler
 {
-    public function __construct(private readonly EntityManagerInterface $entityManager) {}
+    public function __construct(private readonly SubscriberRepository $subscriberRepository) {}
 
-    public function __invoke(ProcessCsvBatch $message)
+    public function __invoke(ProcessCsvBatch $message): void
     {
-        $connection = $this->entityManager->getConnection();
-
         $values = [];
         $params = [];
 
@@ -26,9 +24,6 @@ class ProcessCsvBatchHandler
             $params[] = $record['address'];
         }
 
-        $sql = "INSERT IGNORE INTO subscriber (name, email, age, address) VALUES " . implode(", ", $values);
-        $connection->executeStatement($sql, $params);
-        $this->entityManager->flush();
-        $this->entityManager->clear();
+        $this->subscriberRepository->persistBatch($values, $params);
     }
 }
